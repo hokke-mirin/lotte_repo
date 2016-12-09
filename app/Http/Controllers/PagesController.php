@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use  DB;
+use Illuminate\Session\TokenMismatchException;
 
 class PagesController extends Controller {
 
@@ -14,71 +16,55 @@ class PagesController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        return view("index");
+        $memberData = $this->memberList();
+      return view('index',compact('memberData'));
+    }
+    public function Confirm(){
+      $memberData = $this->memberList();
+      $insert = $this->insert();
+      //$update = $this->update();
+      //$delete = $this->delete();
+        return view('index',compact('memberData','insert'));
+        //return view('index',compact('memberData','insert','update','delete'));
+
+    }
+    public function memberList(){
+      $memberData = DB::table('member')
+      ->join('position','position.id','=','member.id')
+      ->select('name','number','position','BirthDate',DB::raw('TIMESTAMPDIFF(YEAR,BirthDate,CURDATE()) AS `age`'))
+      ->get();
+      return $memberData;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() {
-        //
+    public function insert(){
+      //新規追加
+      $insert = DB::table('member')
+      ->insert('insert into member(name,number,position,BirthDate) values(?,?,?,?)',['$name',$number,'$position',$BirthDate])
+      ->get();
+      return $insert;
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        //
+    /*
+    public function update(){
+      //すでにいる選手の情報更新
+      $update = DB：：table('member')
+      ->update('update member(name,number,position,BirthDate) values(?,?,?,?)',['$name',$number,'$position',$BirthDate])
+      ->get();
+      return update;
     }
+    public function delete(){
+      //選手の削除
+      $delete=DB::table('member')
+      //名前と背番号必須項目(同姓同名対策)
+      ->where('name=?',['$name'])
+      ->where('number=?',['$number'])
+      ->delete();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id) {
-        //
+*/
+    public function validationCheck(){
+      //新規・更新・削除の際にヴァリデーションチェックする。
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id) {
-        //
+    public function e(){
+      //errorCheck
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id) {
-        //
-    }
-
-    //public function contact() {
-    //    return view("contact");  // (a) view 関数に変更
-    //}
-
 }
