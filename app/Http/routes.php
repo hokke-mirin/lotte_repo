@@ -15,4 +15,8 @@
 //    return view('welcome');
 //});
 Route::get('/', 'PagesController@index');
+Route::get('/Confirm', 'PagesController@Confirm');
+//Route::get('/insert','PagesController@insert');
+//Route::get('/update','PagesController@update');
+//Route::get('/delete','PagesController@delete');
 //Route::get('contact', 'PagesController@contact');
